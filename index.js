@@ -7,9 +7,8 @@ const path = require('path');
 const resolve = require('path').resolve;
 let givenPath = process.argv[2];
 givenPath = resolve(givenPath);
-console.log(givenPath);
 
-const isItFileOrFolder = () => {
+const readFilesAndFolders = () => {
   fs.lstat(givenPath, (err, stats) => {
     if (err) {
       return console.log(err);
@@ -17,13 +16,13 @@ const isItFileOrFolder = () => {
     if (stats.isFile()) {
       if (isItMd()) {
         console.log('Estás en un archivo. Contiene los siguientes links:')
-        readAfile();
+        getLinksInMdFile();
       } else {
         console.log('Estás en un archivo, pero su extensión no es la indicada');
       }
     } else if (stats.isDirectory()) {
       console.log('Estás en un directorio. Contiene los siguientes archivos:');
-      readADir();
+      getFilesInFolder();
     }
   })
 };
@@ -34,16 +33,26 @@ const isItMd = () => {
   return fileExtension === mdExtension;
 };
 
-const readAfile = () => {
+const getLinksInMdFile = () => {
   fs.readFile(givenPath, 'utf8', (err, data) => {
     if (err) {
       return console.log(err);
     }
-    console.log(data);
+    const linksRegExp = /(?<!\!)\[([^\]]+)]\((https?:\/\/[^\s)]+)\)/g;
+    const foundMatches = data.matchAll(linksRegExp);
+    const linksList = [];
+    for (const match of foundMatches) {
+      linksList.push({
+        href: match[2],
+        text: match[1],
+        file: givenPath,
+      });
+    }
+    console.log(linksList);
   });
 };
 
-const readADir = () => {
+const getFilesInFolder = () => {
   fs.readdir(givenPath, (err, files) => {
     if (err) {
       return console.log(err);
@@ -54,4 +63,4 @@ const readADir = () => {
   });
 };
 
-isItFileOrFolder(givenPath);
+readFilesAndFolders(givenPath);
