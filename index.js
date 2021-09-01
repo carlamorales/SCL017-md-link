@@ -7,6 +7,8 @@ const path = require('path');
 const resolve = require('path').resolve;
 let givenPath = process.argv[2];
 givenPath = resolve(givenPath);
+const validate = process.argv[3] === '--validate' || process.argv[4] === '--validate';
+const stats = process.argv[3] === '--stats' || process.argv[4] === '--stats';
 
 const readFilesAndFolders = () => {
   fs.lstat(givenPath, (err, stats) => {
@@ -16,7 +18,8 @@ const readFilesAndFolders = () => {
     if (stats.isFile()) {
       if (isItMd()) {
         console.log('Estás en un archivo. Contiene los siguientes links:')
-        getLinksInMdFile();
+        const links = getLinksInMdFile(); // 1. imprimir links y 2. retornar arreglo de links
+        // analizar links
       } else {
         console.log('Estás en un archivo, pero su extensión no es la indicada');
       }
@@ -46,9 +49,10 @@ const getLinksInMdFile = () => {
         href: match[2],
         text: match[1],
         file: givenPath,
-      });
+      })
+      console.log(givenPath + ' ' + match[2] + ' ' + match[1]);
     }
-    console.log(linksList);
+    return linksList;
   });
 };
 
