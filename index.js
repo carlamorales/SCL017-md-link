@@ -40,12 +40,12 @@ const getLinksInMdFile = () => {
     if (err) {
       return console.log(err);
     }
-    const mdLinks = savedLinks(data);
-    console.log(mdLinks);
+    const foundLinks = findLinks(data);
+    console.log(foundLinks);
   });
 };
 
-const savedLinks = (dataContent) => {
+const findLinks = (dataContent) => {
   const linksRegExp = /(?<!\!)\[([^\]]+)]\((https?:\/\/[^\s)]+)\)/g;
   const foundMatches = dataContent.matchAll(linksRegExp);
   const linksList = [];
