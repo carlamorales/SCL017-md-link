@@ -18,8 +18,7 @@ const readFilesAndFolders = () => {
     if (stats.isFile()) {
       if (isItMd()) {
         console.log('Estás en un archivo. Contiene los siguientes links:')
-        const links = getLinksInMdFile(); // 1. imprimir links y 2. retornar arreglo de links
-        // analizar links
+        getLinksInMdFile();
       } else {
         console.log('Estás en un archivo, pero su extensión no es la indicada');
       }
@@ -41,19 +40,24 @@ const getLinksInMdFile = () => {
     if (err) {
       return console.log(err);
     }
-    const linksRegExp = /(?<!\!)\[([^\]]+)]\((https?:\/\/[^\s)]+)\)/g;
-    const foundMatches = data.matchAll(linksRegExp);
-    const linksList = [];
-    for (const match of foundMatches) {
-      linksList.push({
-        href: match[2],
-        text: match[1],
-        file: givenPath,
-      })
-      console.log(givenPath + ' ' + match[2] + ' ' + match[1]);
-    }
-    return linksList;
+    const mdLinks = savedLinks(data);
+    console.log(mdLinks);
   });
+};
+
+const savedLinks = (dataContent) => {
+  const linksRegExp = /(?<!\!)\[([^\]]+)]\((https?:\/\/[^\s)]+)\)/g;
+  const foundMatches = dataContent.matchAll(linksRegExp);
+  const linksList = [];
+  for (const match of foundMatches) {
+    linksList.push({
+      href: match[2],
+      text: match[1],
+      file: givenPath,
+    })
+    console.log(givenPath + ' ' + match[2] + ' ' + match[1]);
+  }
+  return linksList;
 };
 
 const getFilesInFolder = () => {
