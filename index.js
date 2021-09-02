@@ -7,8 +7,20 @@ const path = require('path');
 const resolve = require('path').resolve;
 let givenPath = process.argv[2];
 givenPath = resolve(givenPath);
-const validate = process.argv[3] === '--validate' || process.argv[4] === '--validate';
-const stats = process.argv[3] === '--stats' || process.argv[4] === '--stats';
+const options = {
+  validate: process.argv[3] === '--validate' || process.argv[4] === '--validate',
+  stats: process.argv[3] === '--stats' || process.argv[4] === '--stats',
+};
+
+if (options.validate && options.stats) {
+  console.log('validate and stats');
+} else if (options.validate) {
+  console.log('only validate');
+} else if (options.stats) {
+  console.log('only stats');
+} else {
+  console.log('neither validate nor stats');
+};
 
 const readFilesAndFolders = () => {
   fs.lstat(givenPath, (err, stats) => {
@@ -41,7 +53,7 @@ const getLinksInMdFile = () => {
       return console.log(err);
     }
     const foundLinks = findLinks(data);
-    console.log(foundLinks);
+    // console.log(foundLinks);
   });
 };
 
