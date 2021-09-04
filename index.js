@@ -11,16 +11,17 @@ const options = {
   validate: process.argv[3] === '--validate' || process.argv[4] === '--validate',
   stats: process.argv[3] === '--stats' || process.argv[4] === '--stats',
 };
+const axios = require('axios');
 
-if (options.validate && options.stats) {
-  console.log('validate and stats');
-} else if (options.validate) {
-  console.log('only validate');
-} else if (options.stats) {
-  console.log('only stats');
-} else {
-  console.log('neither validate nor stats');
-};
+// if (options.validate && options.stats) {
+//   console.log('validate and stats');
+// } else if (options.validate) {
+//   console.log('only validate');
+// } else if (options.stats) {
+//   console.log('only stats');
+// } else {
+//   console.log('neither validate nor stats');
+// };
 
 const readFilesAndFolders = () => {
   fs.lstat(givenPath, (err, stats) => {
@@ -53,7 +54,9 @@ const getLinksInMdFile = () => {
       return console.log(err);
     }
     const foundLinks = findLinks(data);
-    // console.log(foundLinks);
+    if (options.validate) {
+      getLinksStatus(foundLinks);
+    }
   });
 };
 
@@ -67,9 +70,25 @@ const findLinks = (dataContent) => {
       text: match[1],
       file: givenPath,
     })
-    console.log(givenPath + ' ' + match[2] + ' ' + match[1]);
+    if (!options.validate && !options.stats) {
+      console.log(givenPath + ' ' + match[2] + ' ' + match[1]);
+    }
   }
   return linksList;
+};
+
+const getLinksStatus = (allLinks) => {
+  for (link of allLinks) {
+    axios(link.href)
+    .then((response) => {
+      if (response.status === 200) {
+        console.log('OK ' + response.status);
+      }
+    })
+    .catch((err) => {
+      console.log('FAIL');
+    })
+  }
 };
 
 const getFilesInFolder = () => {
