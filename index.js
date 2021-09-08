@@ -81,13 +81,15 @@ const getLinksStatus = (allLinks) => {
   for (link of allLinks) {
     axios.get(link.href)
     .then((response) => {
-      console.log(response.statusText);
-      console.log(response.status);
+      const responseStatusText = response.statusText;
+      const responseStatus = response.status;
+      return console.log(responseStatusText, responseStatus);
     })
     .catch((error) => {
       if (error.response) {
-        console.log(error.response.statusText);
-        console.log(error.response.status);
+        const errorResponseStatusText = error.response.statusText;
+        const errorResponseStatus = error.response.status;
+        return console.log(errorResponseStatusText, errorResponseStatus);
       }
     })
   }
