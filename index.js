@@ -79,14 +79,16 @@ const findLinks = (dataContent) => {
 
 const getLinksStatus = (allLinks) => {
   for (link of allLinks) {
-    axios(link.href)
+    axios.get(link.href)
     .then((response) => {
-      if (response.status === 200) {
-        console.log('OK ' + response.status);
-      }
+      console.log(response.statusText);
+      console.log(response.status);
     })
-    .catch((err) => {
-      console.log('FAIL');
+    .catch((error) => {
+      if (error.response) {
+        console.log(error.response.statusText);
+        console.log(error.response.status);
+      }
     })
   }
 };
