@@ -73,7 +73,7 @@ const findLinks = (dataContent) => {
       file: givenPath,
     })
     if (!options.validate && !options.stats) {
-      console.log(givenPath + ' ' + match[2] + ' ' + match[1]);
+      console.log(givenPath, match[2], match[1]);
     }
   }
   return linksList;
