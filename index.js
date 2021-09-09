@@ -54,9 +54,7 @@ const getLinksInMdFile = () => {
       return console.log(err);
     }
     const foundLinks = findLinks(data);
-    if (options.validate && options.stats) {
-      getBrokenLinks(foundLinks);
-    } else if (options.validate) {
+    if (options.validate) {
       getLinksStatus(foundLinks);
     } else if (options.stats) {
       getLinksStatistics(foundLinks);
@@ -104,11 +102,6 @@ const getLinksStatistics = (allLinks) => {
   const unique = new Set(allLinks.map(lnk => lnk.href)).size;
   return console.log('Total:', total, '\nUnique:', unique);
 };
-
-const getBrokenLinks = (allLinks) => {
-  const broken = allLinks.filter(lnk => lnk.status !== 200).length;
-  return console.log('Broken:', broken);
-}
 
 const getFilesInFolder = () => {
   fs.readdir(givenPath, (err, files) => {
