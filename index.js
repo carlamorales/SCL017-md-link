@@ -54,7 +54,15 @@ const getLinksInMdFile = () => {
       return console.log(err);
     }
     const foundLinks = findLinks(data);
-    if (options.validate) {
+    if (options.validate && options.stats) {
+      getLinksStatus(foundLinks);
+      setTimeout(() => {
+        brokenLinks;
+      }, 3000);
+      setTimeout(() => {
+        getLinksStatistics(foundLinks);
+      }, 4000);
+    } else if (options.validate) {
       getLinksStatus(foundLinks);
     } else if (options.stats) {
       getLinksStatistics(foundLinks);
@@ -79,6 +87,7 @@ const findLinks = (dataContent) => {
   return linksList;
 };
 
+let brokenLinks = 0;
 const getLinksStatus = (allLinks) => {
   for (link of allLinks) {
     axios.get(link.href)
@@ -91,6 +100,7 @@ const getLinksStatus = (allLinks) => {
       if (error.response) {
         const errorResponseStatusText = error.response.statusText;
         const errorResponseStatus = error.response.status;
+        brokenLinks++;
         return console.log(errorResponseStatusText, errorResponseStatus);
       }
     })
@@ -100,7 +110,11 @@ const getLinksStatus = (allLinks) => {
 const getLinksStatistics = (allLinks) => {
   const total = allLinks.length;
   const unique = new Set(allLinks.map(lnk => lnk.href)).size;
-  return console.log('Total:', total, '\nUnique:', unique);
+  if (options.validate && options.stats) {
+    return console.log('Total:', total, '\nUnique:', unique, '\nBroken:', brokenLinks);
+  } else if (options.stats) {
+    return console.log('Total:', total, '\nUnique:', unique);
+  }
 };
 
 const getFilesInFolder = () => {
